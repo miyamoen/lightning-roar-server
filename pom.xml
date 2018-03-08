@@ -188,7 +188,7 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.6.0</version>
                         <configuration>
-                            <mainClass>backendexample.ReplMain</mainClass>
+                            <mainClass>dev.ReplMain</mainClass>
                         </configuration>
                     </plugin>
                 </plugins>

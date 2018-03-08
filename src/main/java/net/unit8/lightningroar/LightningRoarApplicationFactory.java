@@ -26,7 +26,7 @@ public class LightningRoarApplicationFactory implements ApplicationFactory {
     @Override
     public Application create(ComponentInjector injector) {
         WebApplication app = new WebApplication();
-        Routes routes = Routes.define(r -> {
+        Routes routes = Routes.define("/roar" , r -> {
             r.get("/feed/all").to(FeedEntryController.class, "list");
             r.post("/feed/:feedId").to(FeedEntryController.class, "create");
             r.post("/feed/:feedId/subscribe").to(FeedController.class, "subscribe");
@@ -65,12 +65,12 @@ public class LightningRoarApplicationFactory implements ApplicationFactory {
                 .build());
         app.use(new RoutingMiddleware(routes));
         app.use(new DomaTransactionMiddleware<>());
-        app.use(new FormMiddleware());
+        // app.use(new FormMiddleware());
         app.use(builder(new SerDesMiddleware())
                 .set(SerDesMiddleware::setBodyWriters, new ToStringBodyWriter())
                 .build());
         app.use(new MappingExceptionMiddleware<>());
-        app.use(new ValidateFormMiddleware());
+        // app.use(new ValidateFormMiddleware());
         app.use(new ControllerInvokerMiddleware(injector));
 
         return app;

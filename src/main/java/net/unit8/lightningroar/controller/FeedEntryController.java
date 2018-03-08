@@ -1,5 +1,6 @@
 package net.unit8.lightningroar.controller;
 
+import enkan.data.HttpResponse;
 import enkan.collection.Parameters;
 import enkan.component.BeansConverter;
 import enkan.component.doma2.DomaProvider;
@@ -15,6 +16,9 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 
+import static enkan.util.BeanBuilder.builder;
+
+
 public class FeedEntryController {
     @Inject
     private DomaProvider daoProvider;
@@ -29,14 +33,17 @@ public class FeedEntryController {
     }
 
     @Transactional
-    public void create(List<FeedEntryCreateRequest> createRequests, Parameters params) {
+    public HttpResponse create(FeedEntryCreateRequest createRequest, Parameters params) {
         FeedEntryDao feedEntryDao = daoProvider.getDao(FeedEntryDao.class);
         UserFeedEntryDao userFeedEntryDao = daoProvider.getDao(UserFeedEntryDao.class);
-        createRequests.forEach(createRequest -> {
-            FeedEntry feedEntry = beansConverter.createFrom(createRequest, FeedEntry.class);
-            feedEntry.setFeedId(params.getLong("feedId"));
-            feedEntryDao.insert(feedEntry);
-            userFeedEntryDao.insertBatch(feedEntry);
-        });
+
+        FeedEntry feedEntry = beansConverter.createFrom(createRequest, FeedEntry.class);
+        feedEntry.setFeedId(params.getLong("feedId"));
+        feedEntryDao.insert(feedEntry);
+        userFeedEntryDao.insertBatch(feedEntry);
+
+        return builder(HttpResponse.of("Ok"))
+                .set(HttpResponse::setStatus, 200)
+                .build();
     }
 }
